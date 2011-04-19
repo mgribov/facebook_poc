@@ -1,0 +1,14 @@
+DESCRIPTION:
+some simple proof-of-concept tools/examples how to manipulate fb graph api
+
+NOTES:
+- for post.php, make sure ./post_ids.txt exists and is writable by httpd
+- for pretty much all posts make sure ./images/ exists
+
+FILES:
+* facebook_sdk.php - official facebook php sdk @TODO git submodule
+* facebook.php - simple ui for post with most fields editable
+* note.php - simple ui for creating note with most fields editable
+* post.php - post something to facebook, and keep track of it on every login
+* fb_albums/ - sime iframe app to show images in a folder
+

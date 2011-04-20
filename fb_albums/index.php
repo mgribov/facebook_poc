@@ -1,40 +1,37 @@
 <?php
-// @see: http://developers.facebook.com/docs/authentication/signed_request/
-if ($_POST['signed_request']) {
-    
-    // sigil albums app 
-    $app_secret = '89119a0175ea7418ade40ee9522b71e9';
-    $json = parse_signed_request($_POST['signed_request'], $app_secret);
-    //var_dump($json);
+require_once 'config.php';
+require_once 'functions.php';
+
+$fb_raw = parse_fb();
+$fb = verify_fb($fb_raw);
+$show_admin = (is_array($fb) && $fb['oauth_token']['admin']);
+
+if ($_POST['a']) {
+    switch (strtolower($_POST['a'])) {
+        case ACTION_CREATE_ALBUM:
+        break;
+
+    }
 }
 
-$dir = '../images';
-$images = scandir($dir);
-
-function parse_signed_request($signed_request, $secret) {
-  list($encoded_sig, $payload) = explode('.', $signed_request, 2); 
-
-  // decode the data
-  $sig = base64_url_decode($encoded_sig);
-  $data = json_decode(base64_url_decode($payload), true);
-
-  if (strtoupper($data['algorithm']) !== 'HMAC-SHA256') {
-    error_log('Unknown algorithm. Expected HMAC-SHA256');
-    return null;
-  }
-
-  // check sig
-  $expected_sig = hash_hmac('sha256', $payload, $secret, $raw = true);
-  if ($sig !== $expected_sig) {
-    error_log('Bad Signed JSON signature!');
-    return null;
-  }
-
-  return $data;
-}
-
-function base64_url_decode($input) {
-  return base64_decode(strtr($input, '-_', '+/'));
+$albums = null;
+$a = scandir(ALBUM_DIR);
+if (count($a) > 2) {
+    foreach ($a as $i) {
+        if ($i == '.' || $i == '..') {
+            continue;
+        }
+        $album_icon = get_album_icon($i);
+        $albums .= "<a href='album.php?a=$i&fb=$fb_raw'><img height='50' width='50' src='" . ALBUM_PATH . "/$i/$album_icon'> - $i</a>";
+        if ($show_admin) {
+            $albums .= '<form action="album.php?d=' . $i . '">';
+            $albums .= '<input type="hidden" name="fb_oauth" value="' . $fb_raw . '">';
+            $albums .= '<input type="hidden" name="album_name" value="' . $i . '">';
+            $albums .= '<input type="submit" name="a" value="' . ACTION_DELETE_ALBUM . '">';
+            $albums .= '</form>';
+        }
+        $albums .= '<br/>';
+    }
 }
 
 ?>
@@ -42,60 +39,34 @@ function base64_url_decode($input) {
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" id="facebook" class=" no_js">
     <head>
-        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-        <meta http-equiv="Content-language" content="en" />
-        <title>Sigil Albums</title>
-
-        <script type="text/javascript">
-            window.fbAsyncInit = function() {
-                FB.Canvas.setSize();
-            }
-            // Do things that will sometimes call sizeChangeCallback()
-            function sizeChangeCallback() {
-                FB.Canvas.setSize();
-            }
-        </script>
-
-        <style type="text/css">
-            body {
-                width:520px;
-                margin:0; padding:0; border:0;
-            }
-        </style>
-
+    <?php include_once('head.php');?>
     </head>
 
     <body>
 
         <p>Welcome!</p>
 
+        <?php if ($show_admin) : ?>
+            <div id="nav">
+                <a href="#" onClick="showhide('create_album')">Create Album</a>
+            </div>
+            
+            <div id="create_album" style="display:none;">
+                <form target='album.php' method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="fb_oauth" value="<?php echo $fb_raw?>">
+                Album Name: <input type="text" name="album_name" value="<?php echo $album_name;?>"><br/>
+                Album Icon: <input type="file" name="album_icon"><br/>
+                <input type="submit" name="a" value="<?php echo ACTION_CREATE_ALBUM;?>"><br/>
+            </div>
+
+        <?php endif; ?>
+
         <?php 
-            if (count($images) > 2) {
-                foreach ($images as $i) {
-                    if ($i == '.' || $i == '..') {
-                        continue;
-                    }
-                    echo "<a href='image.php?i=$i'><img height='50' width='50' src='/facebook/images/$i'></a>";
-                }
+            if ($albums !== null) {
+                echo $albums;
             }
         ?>
-
-
-
-        <div id="fb-root"></div>
-        <script src="http://connect.facebook.net/en_US/all.js"></script>
-        <script>
-            FB.init({
-                appId : '369079504615',
-                status : true, // check login status
-                cookie : true, // enable cookies to allow the server to access the session
-                xfbml : true // parse XFBML
-            });
- 
-            window.fbAsyncInit = function() {
-                FB.Canvas.setAutoResize();
-            }
-        </script>
-
+        
+        <?php include_once('fb_foot.php');?>
     </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 
 define('POSTS_FILE', 'post_ids.txt');
-require_once './facebook_sdk.php';
+require_once './php-sdk/src/facebook.php';
 $error = array();
 $fb_post = array();
 

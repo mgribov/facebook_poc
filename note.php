@@ -1,6 +1,6 @@
 <?php
 
-require_once './facebook_sdk.php';
+require_once './php-sdk/src/facebook.php';
 $error = array();
 
 $facebook = new Facebook(array(

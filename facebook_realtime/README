@@ -1,0 +1,4 @@
+- ex: Show current subscriptions:  php facebook_realtime_register.php -i <app_id> -s <app_secret> -a get
+- ex: Register for feed updates: php facebook_realtime_register.php -i <app_id> -s <app_secret> -c http://mysite.com/facebook_callback.php -t <verify_token> -a post -f feed
+- ex: Delete all subscriptions:  php facebook_realtime_register.php -i <app_id> -s <app_secret> -a delete
+

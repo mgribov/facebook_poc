@@ -9,5 +9,6 @@ FILES:
 * facebook.php - simple ui for post with most fields editable
 * note.php - simple ui for creating note with most fields editable
 * post.php - post something to facebook, and keep track of it on every login
-* fb_albums/ - sime iframe app to show images in a folder
+* fb_albums/ - simple iframe app to show images in a folder
+* facebook_realtime/ - CLI script to manage subscriptions to Facebook realtime API (http://developers.facebook.com/docs/api/realtime/)
 

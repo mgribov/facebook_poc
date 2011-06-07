@@ -6,7 +6,6 @@ NOTES:
 - for pretty much all posts make sure ./images/ exists
 
 FILES:
-* facebook_sdk.php - official facebook php sdk @TODO git submodule
 * facebook.php - simple ui for post with most fields editable
 * note.php - simple ui for creating note with most fields editable
 * post.php - post something to facebook, and keep track of it on every login
